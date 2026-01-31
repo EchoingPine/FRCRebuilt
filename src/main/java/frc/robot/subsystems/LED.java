@@ -21,6 +21,10 @@ public class LED extends SubsystemBase{
     
     public void setLights(){
         char gameState = FieldUtils.getInstance().getGameState();
+        double currentMatchTime = FieldUtils.getInstance().stateTimeLeft();
+        if (currentMatchTime < cfgDbl("stateChangeWarningTime")){
+            //something to alter the existing colors
+        } 
         switch (gameState){
 
             case 'A': //auto

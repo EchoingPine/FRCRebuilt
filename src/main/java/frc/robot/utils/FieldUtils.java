@@ -142,5 +142,8 @@ public class FieldUtils{
         }
 
     }
+    public double stateTimeLeft(){
+        return timer.getMatchTime(); //approximate
+    }
     
 }
