@@ -58,6 +58,7 @@
 
         {"varName" : "turretDeadzoneStart", "value": 6.28319},
         {"varName" : "turretHardLimit", "value" : 9.942478},
+        {"varName" : "turretSoftLimit", "value" : 9.942478},
 
         {"varName" : "hoodAngleMotorCANid", "value" : 13},
         {"varName" : "chimneyMotorCANid", "value" : 14}
@@ -123,6 +124,7 @@
 
         {"varName" : "turretDeadzoneStart", "value": 6.28319},
         {"varName" : "turretHardLimit", "value" : 9.942478},
+        {"varName" : "turretSoftLimit", "value" : 9.942478},
 
         {"varName" : "hoodAngleMotorCANid", "value" : 13},
         {"varName" : "chimneyMotorCANid", "value" : 14}
