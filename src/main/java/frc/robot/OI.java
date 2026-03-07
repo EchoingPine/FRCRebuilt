@@ -15,7 +15,6 @@ import frc.robot.commands.intake.IntakeOut;
 import frc.robot.commands.shooter.ChimneyDown;
 import frc.robot.commands.shooter.ChimneyUp;
 import frc.robot.commands.shooter.ManualShooterControl;
-import frc.robot.commands.shooter.TurretToHub;
 import frc.robot.commands.spindexer.SpindexerReverse;
 import frc.robot.commands.spindexer.SpindexerSpin;
 import frc.robot.subsystems.Drive;
@@ -94,12 +93,6 @@ public class OI {
 			.endSubmap()
 
 			.beginSubmap(Submap.AUTO)
-				.whileTrue(m_driverXboxController.y(), Commands.parallel(
-					new ChimneyUp(),
-					new SpindexerSpin(),
-					new IntakeOut())
-				)
-
 				.switchSubmap(driverIndicator, m_driverXboxController.start(), Submap.MANUAL)
 			.endSubmap()
 
@@ -108,7 +101,12 @@ public class OI {
 		SwitchIndicator operatorIndicator = new RumbleIndicator(m_operatorXboxController.getHID());
 		new TriggerBuilder<Submap>(m_operatorSubmap)
 			.map(m_operatorXboxController.a(), new ManualShooterControl(), Trigger::toggleOnTrue)
-			.whileTrue(m_operatorXboxController.b(), new TurretToHub())
+
+			.whileTrue(m_operatorXboxController.y(), Commands.parallel(
+				new ChimneyUp(),
+				new SpindexerSpin(),
+				new IntakeIn())
+			)
 
 			.register();
     }

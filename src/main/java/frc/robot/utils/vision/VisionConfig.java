@@ -27,21 +27,6 @@ public class VisionConfig
     public PoseStrategy fallBackStrategy;
     public boolean includeInPoseEstimates;
 
-    @JsonCreator
-    public VisionConfig(@JsonProperty(required = true, value="name") String name,
-                        @JsonProperty(required = true, value="translation") Translation3d camTranslation,
-                        @JsonProperty(required = true, value="rotation") Rotation3d camRotation,
-                        @JsonProperty(required = true, value="primaryStrat") PoseStrategy primPoseStrategy,
-                        @JsonProperty(required = true, value="backupStrat") PoseStrategy fallbackPoseStrategy,
-                        @JsonProperty(required = false, value="includeInPoseEstimates", defaultValue="true") boolean includeInPoseEstimates) {
-        this.cameraName = name;
-        this.cameraTranslation = camTranslation;
-        this.cameraRotation = camRotation;
-        this.primaryStrategy = primPoseStrategy;
-        this.fallBackStrategy = fallbackPoseStrategy;
-        this.includeInPoseEstimates = includeInPoseEstimates;
-    }
-
     private static class EulerAngles {
         private double m_pitch;
         private double m_yaw;
