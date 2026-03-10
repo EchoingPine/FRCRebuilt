@@ -531,8 +531,6 @@ public class Shooter extends SubsystemBase {
 
         switch (state) {
             case SHOOTING: {
-                double softLimit = cfgDbl("turretSoftLimit");
-
                 /*
                  * motion to directly hit target angle in the free zone
                  * by wrapping target angle to -180 to 180 degrees, following this motion
@@ -540,7 +538,7 @@ public class Shooter extends SubsystemBase {
                  * 
                  * can be trusted but will be unoptimized
                  */
-                double freeMotion = robotTargetAngle % Math.PI - robotAngle;
+                double freeMotion = (robotTargetAngle + Math.PI) % (2*Math.PI) - Math.PI - robotAngle;
 
                 /*
                  * shortest possible movement to the target angle
@@ -555,7 +553,7 @@ public class Shooter extends SubsystemBase {
 
                 double motion = freeMotion;// shortestMotion;
                 // fallback to free motion if shortest motion passes over limit
-                if (robotAngle + shortestMotion > softLimit || robotAngle + shortestMotion < -softLimit) {
+                if (robotAngle + shortestMotion > m_turretForwardHardLimit || robotAngle + shortestMotion < m_turretReverseHardLimit) {
                     motion = freeMotion;
                 }
 
@@ -563,7 +561,7 @@ public class Shooter extends SubsystemBase {
             }
             case FERRYING: {
                 // i wrote two paragraphs explaining why this single statement is cool
-                return robotTargetAngle % Math.PI;
+                return (robotTargetAngle + Math.PI) % (2 * Math.PI) - Math.PI;
             }
             case ROBOT_RELATIVE: {
                 return targetAngle;
@@ -607,20 +605,20 @@ public class Shooter extends SubsystemBase {
         }
         case CALIBRATE_FULL: {
             m_turretMotor.set(m_turretCalibratedForward ? -0.5 : 0.5);
-            //System.out.println(m_turretCalibratedForward);
+            System.out.println(m_turretCalibratedForward);
 
             HardLimitDirection hardLimit = m_turretCurrentLimit.check();
             if (hardLimit == HardLimitDirection.kForward) {
                 m_turretCalibratedForward = true;
                 m_turretMotor.getEncoder().setPosition(0);
                 m_turretMotor.set(-0.5);
-            } else if (hardLimit == HardLimitDirection.kReverse) {
+            } else if (hardLimit == HardLimitDirection.kReverse && m_turretMotor.getEncoder().getPosition() < -Math.PI/2.0) {
                 m_turretCalibratedReverse = true;
 
                 double range = m_turretMotor.getEncoder().getPosition();
                 m_turretForwardHardLimit = -range/2.0;
                 m_turretReverseHardLimit = range/2.0;
-                //System.out.println("Setting encoder to " + m_turretReverseHardLimit);
+                System.out.println("Setting encoder to " + m_turretReverseHardLimit);
                 m_turretMotor.getEncoder().setPosition(m_turretReverseHardLimit);
                 m_turretState = new TrapezoidProfile.State(m_turretReverseHardLimit, 0);
 

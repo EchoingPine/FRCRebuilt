@@ -162,7 +162,7 @@ public final class Constants {
         public static final double kTurretPlanetaryRatio = Configuration.getInstance().getDouble("Shooter", "turretPlanetaryRatio");
         public static final double kTurretPinionTeeth = Configuration.getInstance().getDouble("Shooter", "turretPinionTeeth");
         public static final double kTurretGearTeeth = Configuration.getInstance().getDouble("Shooter", "turretGearTeeth");
-        public static final double kTurretPositionFactor = 2*Math.PI * kTurretPinionTeeth / (kTurretGearTeeth * kTurretPlanetaryRatio);
+        public static final double kTurretPositionFactor = 1.0/Configuration.getInstance().getDouble("Shooter", "turretRatio") * 2 * Math.PI;//2*Math.PI * kTurretPinionTeeth / (kTurretGearTeeth * kTurretPlanetaryRatio);
 
         public static final double kTurretMaxAccel = 10*Math.PI;
         public static final double kTurretMaxVelocity = 2*Math.PI;
