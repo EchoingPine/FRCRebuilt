@@ -181,6 +181,8 @@
         {"varName" : "flywheelKv", "value": 0.00185},
         {"varName" : "flywheelKa", "value": 0},
 
+        {"varName" : "flywheelVelocityFactor", "value" : 1},
+
         {"varName" : "turretEnabled", "value" : true},
         {"varName" : "turretRotationCANid", "value" : 10},
         {"varName" : "tuneTurret", "value" : false},
