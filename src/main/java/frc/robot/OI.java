@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.drive.JoystickHeadingDrive;
+import frc.robot.commands.intake.DeployerIn;
+import frc.robot.commands.intake.DeployerOut;
 import frc.robot.commands.intake.IntakeIn;
 import frc.robot.commands.intake.IntakeOut;
 import frc.robot.commands.shooter.StopTurretCalibration;
@@ -105,6 +107,9 @@ public class OI {
 
 				.whileTrue(m_driverXboxController.b(), new ChimneyUp())
 				*/
+
+				.whileTrue(m_driverXboxController.y(), new DeployerOut())
+				.whileTrue(m_driverXboxController.x(), new DeployerIn())
 
 				.whileTrue(m_driverXboxController.leftBumper(), new IntakeIn())
 

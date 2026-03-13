@@ -66,14 +66,17 @@ public class Intake extends SubsystemBase {
 
             m_deployConfig1 = deployConfig1.m_config;
             m_deployConfig1
-                .idleMode(IdleMode.kCoast)
+                .idleMode(IdleMode.kBrake)
                 .smartCurrentLimit(cfgInt("deployerStallLimit"), cfgInt("deployerFreeLimit"));
 
             m_deployConfig2 = deployConfig2.m_config;
+            m_deployConfig2.idleMode(IdleMode.kBrake);
             m_deployConfig2.follow(m_deployMotor1, cfgBool("deployer2Invert"));
 
             m_deployMotor1.configure(m_deployConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
             m_deployMotor2.configure(m_deployConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+            m_deployLimitDetector = new SparkCurrentLimitDetector(m_deployMotor1, cfgDbl("deployerCurrentLimit"), cfgDbl("deployerZeroVelocityThreshold"));
 
             m_TDdeployerCurrentOutput = new TDNumber(this, "Intake", "Deployer Measured Current");
         }
