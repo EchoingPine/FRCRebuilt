@@ -12,6 +12,8 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 
 /** Add your docs here. */
 public class SparkCurrentLimitDetector {
+    static private final double c_defaultDebounceTime = 0.1;
+
     public enum HardLimitDirection {
         kForward, //Hit forward limit
         kFree, //Limit is not engaged
@@ -25,10 +27,14 @@ public class SparkCurrentLimitDetector {
     private HardLimitDirection m_tripDirection;
 
     public SparkCurrentLimitDetector(SparkBase motorController, double currentTripPoint, double zeroSpeedTolerance) {
+        this(motorController, currentTripPoint, zeroSpeedTolerance, c_defaultDebounceTime);
+    }
+
+    public SparkCurrentLimitDetector(SparkBase motorController, double currentTripPoint, double zeroSpeedTolerance, double debounceTime) {
         m_motorController = motorController;
         m_tripPoint = currentTripPoint;
         m_velocityTolerance = zeroSpeedTolerance;
-        m_debouncer = new Debouncer(0.1, DebounceType.kRising);
+        m_debouncer = new Debouncer(debounceTime, DebounceType.kRising);
         m_tripDirection = HardLimitDirection.kFree;
     }
 
@@ -42,8 +48,7 @@ public class SparkCurrentLimitDetector {
         if(limitHit) {
             m_tripDirection = (m_motorController.getAppliedOutput() > 0) ? HardLimitDirection.kForward : HardLimitDirection.kReverse;
         }
-        else if((m_tripDirection == HardLimitDirection.kForward && motorVelocity < m_velocityTolerance) ||
-                (m_tripDirection == HardLimitDirection.kReverse && motorVelocity > -m_velocityTolerance)){
+        else if(!MathUtil.isNear(0, motorVelocity, m_velocityTolerance)){
             m_tripDirection = HardLimitDirection.kFree;
         }
 
