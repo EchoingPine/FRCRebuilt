@@ -21,6 +21,7 @@ public class BasicShooter extends Command {
     m_Shooter = Shooter.getInstance();
     m_spindexer = Spindexer.getInstance();
     m_spindexerSpeed = Configuration.getInstance().getDouble("Spindex", "spindexSpeed");
+    addRequirements(m_Shooter);
   }
 
   // Called when the command is initially scheduled.
