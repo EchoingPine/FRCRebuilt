@@ -435,7 +435,7 @@
         {"varName" : "hoodMaxAcceleration", "value" : 720},
         {"varName" : "hoodMaxAngle", "value" : 0},
         {"varName" : "hoodMinAngle", "value": -35},
-        {"varName" : "hoodAngleOffset", "value" : 10},
+        {"varName" : "hoodAngleOffset", "value" : 15},
         {"varName" : "hoodTolerance", "value" : 0.5},
 
 		{"varName" : "chimneyEnabled", "value" : true},

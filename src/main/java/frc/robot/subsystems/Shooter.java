@@ -46,10 +46,10 @@ import frc.robot.testingdashboard.TDNumber;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.SwerveTurretPoseEstimator3d;
-import frc.robot.utils.TrajectorySolver.TrajectoryConditions;
-import frc.robot.utils.TrajectorySolver.TrajectoryParameters;
 import frc.robot.utils.sensing.SparkCurrentLimitDetector;
 import frc.robot.utils.sensing.SparkCurrentLimitDetector.HardLimitDirection;
+import frc.robot.utils.trajectory.TrajectorySolver.TrajectoryConditions;
+import frc.robot.utils.trajectory.TrajectorySolver.TrajectoryParameters;
 import frc.robot.utils.vision.VisionEstimationResult;
 
 public class Shooter extends SubsystemBase {
@@ -266,18 +266,6 @@ public class Shooter extends SubsystemBase {
 
         m_TDflywheelVelocity = new TDNumber(this, "Flywheel", "Target Velocity");
         m_TDflywheelVelocity.set(0);
-
-        // m_TDflywheelLinTermM = new TDNumber(this, "VelocityMapping", "TermM", true);
-        // m_TDflywheelLinTermM.set(ShooterConstants.kVelocityLinTermM_45);
-        // m_TDflywheelLinTermB = new TDNumber(this, "VelocityMapping", "TermB", true);
-        // m_TDflywheelLinTermB.set(ShooterConstants.kVelocityLinTermB_45);
-
-        m_flywheelVelocityTermsM = new InterpolatingDoubleTreeMap();
-        m_flywheelVelocityTermsB = new InterpolatingDoubleTreeMap();
-        for (double[] mapping : ShooterConstants.kVelocityLinTerms) {
-            m_flywheelVelocityTermsM.put(mapping[0], mapping[1]);
-            m_flywheelVelocityTermsB.put(mapping[0], mapping[2]);
-        }
 
         m_TDflywheelMeasuredVelocity = new TDNumber(this, "Flywheel", "Measured Velocity");
         m_TDflywheelMeasuredCurrent = new TDNumber(this, "Flywheel", "Measured Current");
@@ -612,11 +600,7 @@ public class Shooter extends SubsystemBase {
             final double rpm = (-b + Math.sqrt(b*b - 4*a*(c-velocity)))/(2*a);
             return Math.max(rpm, 0);
         } else {
-            final double m = m_flywheelVelocityTermsM.get(angle);
-            final double b = m_flywheelVelocityTermsB.get(angle);
-
-            final double rpm = (velocity - b)/m;
-            return Math.max(rpm, 0);
+            return ShooterConstants.kVelocityMap.get(angle).getRPM(velocity);
         }
     }
 
@@ -628,10 +612,7 @@ public class Shooter extends SubsystemBase {
 
             return a*rpm*rpm + b*rpm + c;
         } else {
-            final double m = m_flywheelVelocityTermsM.get(angle);
-            final double b = m_flywheelVelocityTermsB.get(angle);
-            
-            return m*rpm + b;
+            return ShooterConstants.kVelocityMap.get(angle).getVelocity(rpm);
         }
     }
 
