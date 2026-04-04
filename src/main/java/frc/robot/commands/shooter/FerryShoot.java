@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.testingdashboard.Command;
 import frc.robot.testingdashboard.TDSendable;
 import frc.robot.utils.FieldUtils;
+import frc.robot.utils.trajectory.VelocityMapping;
 
 public class FerryShoot extends Command {
     private final Shooter m_Shooter;
@@ -31,6 +33,8 @@ public class FerryShoot extends Command {
     private Translation2d m_targetPosition;
 
     private static Field2d m_field;
+
+    private static final VelocityMapping FERRY_VELOCITY_MAP = new VelocityMapping(3.15, 11.0, 0750, 6000);
 
     public FerryShoot() {
         super(Shooter.getInstance(), "Targeted Shooting", "FerryShoot");
@@ -45,7 +49,7 @@ public class FerryShoot extends Command {
             new TDSendable(m_Shooter, "Targeted Shooting", "FerryTargetDisplay", m_field);
         }
 
-        m_internalShootToPose = ShootToPose.withFixedAngle(this::getTargetPosition, Math.toRadians(40));
+        m_internalShootToPose = ShootToPose.withFixedValues(this::getTargetPosition, Math.toRadians(40), FERRY_VELOCITY_MAP);
     }
 
     public Pose3d getTargetPosition() {

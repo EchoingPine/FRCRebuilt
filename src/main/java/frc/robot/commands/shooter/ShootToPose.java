@@ -24,6 +24,7 @@ import frc.robot.utils.Configuration;
 import frc.robot.utils.FieldUtils;
 import frc.robot.utils.structlogging.StructLogger;
 import frc.robot.utils.trajectory.TrajectorySolver;
+import frc.robot.utils.trajectory.VelocityMapping;
 import frc.robot.utils.trajectory.TrajectorySolver.TrajectoryConditions;
 import frc.robot.utils.trajectory.TrajectorySolver.TrajectoryParameters;
 
@@ -44,6 +45,8 @@ public class ShootToPose extends Command {
 
     private final InterpolatingDoubleTreeMap m_distAngleMap;
 
+    private final VelocityMapping m_overrideVMap;
+
     private static final Map<Double, Double> DEFAULT_ANGLEMAP = Map.of(
         0.0, Math.toRadians(65),
         2.7, Math.toRadians(65),
@@ -57,15 +60,17 @@ public class ShootToPose extends Command {
     private static final int DISPLAY_RES = 16;
 
     public ShootToPose(Supplier<Pose3d> targetSupplier) {
-        this(targetSupplier, DEFAULT_ANGLEMAP);
+        this(targetSupplier, DEFAULT_ANGLEMAP, null);
     }
 
-    public ShootToPose(Supplier<Pose3d> targetSupplier, Map<Double, Double> distAngleMap) {
+    public ShootToPose(Supplier<Pose3d> targetSupplier, Map<Double, Double> distAngleMap, VelocityMapping overrideVMap) {
         super(Shooter.getInstance(), "Targeted Shooting", "ShootToPose");
 
         m_Shooter = Shooter.getInstance();
         m_Drive = Drive.getInstance();
         m_targetSupplier = targetSupplier;
+
+        m_overrideVMap = overrideVMap;
 
         m_distAngleMap = new InterpolatingDoubleTreeMap();
         for (Double key : distAngleMap.keySet()) {
@@ -153,7 +158,7 @@ public class ShootToPose extends Command {
 
         double turretYaw = params.theta_yaw;
         double hoodTarget = m_Shooter.pitchToHood(params.theta_pitch);
-        double flywheelRPM = m_Shooter.velocityToRPM(params.velocity, params.theta_pitch);
+        double flywheelRPM = m_Shooter.velocityToRPM(params.velocity, params.theta_pitch, m_overrideVMap);
 
         System.out.printf("Velocity: %f, RPM: %f\n", params.velocity, flywheelRPM);
 
@@ -221,11 +226,11 @@ public class ShootToPose extends Command {
         m_Shooter.chimneyStop();
     }
 
-    public static ShootToPose withFixedAngle(Supplier<Pose3d> targetSupplier, double angle) {
-        return new ShootToPose(targetSupplier, Map.of(0.0,angle));
+    public static ShootToPose withFixedValues(Supplier<Pose3d> targetSupplier, double angle, VelocityMapping overrideVelocityMapping) {
+        return new ShootToPose(targetSupplier, Map.of(0.0,angle), overrideVelocityMapping);
     }
 
     public static ShootToPose hubTargetting() {
-        return new ShootToPose(FieldUtils.getInstance()::getHubPose, DEFAULT_ANGLEMAP);
+        return new ShootToPose(FieldUtils.getInstance()::getHubPose, DEFAULT_ANGLEMAP, null);
     }
 }

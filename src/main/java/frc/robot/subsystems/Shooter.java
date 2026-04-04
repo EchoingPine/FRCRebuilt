@@ -587,41 +587,19 @@ public class Shooter extends SubsystemBase {
         // dtor(deg - offset) + pi/2 = angle
         return Math.toRadians(hood - Constants.ShooterConstants.kHoodAngleOffset) + Math.PI/2;
     }
-
-    /**
-     * Convert a field velocity to a flywheel velocity for the flywheel
-     * 
-     * @param velocity
-     *            Field velocity in m/s
-     * @return Flywheel velocity in RPM
-     */
-    public double velocityToRPM(double velocity, double angle) {
-        if (ShooterConstants.kVelocityMapQuadratic) {
-            final double a = ShooterConstants.kVelocityQuadTermA;
-            final double b = ShooterConstants.kVelocityQuadTermB;
-            final double c = ShooterConstants.kVelocityQuadTermC;
-
-            final double rpm = (-b + Math.sqrt(b*b - 4*a*(c-velocity)))/(2*a);
-            return Math.max(rpm, 0);
-        } else {
-            if (m_enableOverrideVelocityMapping.get()) return m_overrideVelocityMapping.getRPM(velocity);
-            VelocityMapping map = ShooterConstants.kVelocityMap.get(angle);
-            return map == null ? 0.0 : map.getRPM(velocity);
-        }
+    
+    public double velocityToRPM(double velocity, double angle, VelocityMapping overrideMap) {
+        if (m_enableOverrideVelocityMapping.get()) return m_overrideVelocityMapping.getRPM(velocity);
+        if (overrideMap != null) return overrideMap.getRPM(velocity);
+        VelocityMapping map = ShooterConstants.kVelocityMap.get(angle);
+        return map == null ? 0.0 : map.getRPM(velocity);
     }
 
-    public double RPMtoVelocity(double rpm, double angle) {
-        if (ShooterConstants.kVelocityMapQuadratic) {
-            final double a = ShooterConstants.kVelocityQuadTermA;
-            final double b = ShooterConstants.kVelocityQuadTermB;
-            final double c = ShooterConstants.kVelocityQuadTermC;
-
-            return a*rpm*rpm + b*rpm + c;
-        } else {
-            if (m_enableOverrideVelocityMapping.get()) return m_overrideVelocityMapping.getVelocity(rpm);
-            VelocityMapping map = ShooterConstants.kVelocityMap.get(angle);
-            return map == null ? 0.0 : map.getVelocity(rpm);
-        }
+    public double RPMtoVelocity(double rpm, double angle, VelocityMapping overrideMap) {
+        if (m_enableOverrideVelocityMapping.get()) return m_overrideVelocityMapping.getVelocity(rpm);
+        if (overrideMap != null) return overrideMap.getVelocity(rpm);
+        VelocityMapping map = ShooterConstants.kVelocityMap.get(angle);
+        return map == null ? 0.0 : map.getVelocity(rpm);
     }
 
     // see angleToTarget for more info
